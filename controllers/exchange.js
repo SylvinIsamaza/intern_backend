@@ -1,5 +1,6 @@
 const {transactionRegistrationSchema} = require("../validation/joiValidation");
 const Transaction = require("../model/exchange");
+const user = require("../model/user");
 
 
 //function to create a transaction

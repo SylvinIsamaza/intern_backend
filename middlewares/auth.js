@@ -6,9 +6,9 @@ dotenv.config();
 const authenticateUser = async function (req, res, next) {
   try {
     const { token } = req.cookies;
-    console.log(token)
+   
     const decodedUser = jwt.decode(token, process.env.JWT_SECRET);
-    console.log(decodedUser)
+  
     const user = await User.findById(decodedUser.id);
     if (!user) {
       return res.status(404).send({

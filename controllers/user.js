@@ -1,6 +1,6 @@
 const User = require("../model/user");
 const jwt = require('jsonwebtoken')
-
+const lodash=require('lodash')
 const bcrypt = require('bcrypt');
 const { userRegistrationSchema } = require("../validation/joiValidation");
 const errorHandler = require("../middlewares/errorHandler");
@@ -63,15 +63,23 @@ const createUser = async (req, res) => {
 };
 
 const getUser = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
+
+  
   try {
-    return res.send({
-      status: 200, 
-      success: true,
-      user: lodash.pick(user, ["id", "email", "avatar"]),
-    });
+    const user = await User.findById(req.user.id);
+    if (user) {
+      return res.send({
+        status: 200,
+        success: true,
+        user: await lodash.pick(user, ["id", "email", "avatar"]),
+      });
+    }
+    else {
+      return res.send({message: "User not found" });
+    }
+    
   } catch (error) {
-    return error;
+    return res.send({message: "Something went wrong"+error.message });
   }
 };
 const login = async (req, res, next) => {
@@ -106,4 +114,13 @@ const login = async (req, res, next) => {
   }
 }
 
-module.exports = { createUser, getUser,login };
+const getUserById =async (req, res) => {
+  const user = await User.findById(req.params.id)
+  if (!user) {
+    return res.send("User not found")
+  }
+  else {
+    return res.send({message:"User found",user:user})
+  }
+}
+module.exports = { createUser, getUser,login,getUserById };
